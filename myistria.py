@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 def create_table():
-    return pd.DataFrame(columns=['vila_name', 
+    return pd.DataFrame(columns=['villa_name', 
                                 'location',
                                 'latitude',
                                 'longitude',
@@ -57,7 +57,7 @@ def get_attributes(elements):
 
 
 def fill_table(table, 
-                vila_name, 
+                villa_name, 
                 avg_rate, 
                 elements, 
                 location, 
@@ -69,7 +69,7 @@ def fill_table(table,
 
     pool, max_guests, indor_area, total_plot_area, num_bedrooms, num_bathrooms = get_attributes(elements)
 
-    table = table.append({'vila_name': vila_name, 
+    table = table.append({'villa_name': villa_name, 
                         'location': location,
                         'latitude': latitude,
                         'longitude': longitude,
@@ -100,30 +100,30 @@ if __name__ == "__main__":
         browser.get(link)
 
         #find all villa links
-        all_vila_links = browser.find_elements_by_class_name("title-villa-a")
-        all_vila_links = [x.get_attribute('href') for x in all_vila_links]
+        all_villa_links = browser.find_elements_by_class_name("title-villa-a")
+        all_villa_links = [x.get_attribute('href') for x in all_villa_links]
 
         #write links in txt
         with open('link_list.txt', 'w') as f:
-            for link in all_vila_links:
+            for link in all_villa_links:
                 f.write("%s\n" % link)
         f.close()
 
     else:
         f = open('link_list.txt', 'r')  
-        all_vila_links = f.readlines()
+        all_villa_links = f.readlines()
         f.close()
 
-    for vila in all_vila_links:
+    for villa in all_villa_links:
         try:
-            browser.get(vila)
+            browser.get(villa)
 
             #show more facilities
             show_more_facilities_button = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, "btnShowMoreFacilities")))
             browser.execute_script("arguments[0].click()", show_more_facilities_button)
 
-            #get vila name
-            vila_name = vila.split('/')[-1]
+            #get villa name
+            villa_name = villa.split('/')[-1]
 
             #find categories
             facilities_rows = browser.find_elements_by_class_name("facilities-row")
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                 avg_rate = sum(rates)/len(rates)
 
             table = fill_table(table, 
-                            vila_name, 
+                            villa_name, 
                             avg_rate, 
                             elements, 
                             location, 
@@ -178,11 +178,4 @@ if __name__ == "__main__":
             continue
 
     #save table
-    table.to_pickle('table_19_12_2019.pkl')
-
-
-
-
-
-
-
+    table.to_pickle('table.pkl')
